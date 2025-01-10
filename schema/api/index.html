@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <link rel="canonical" href="https://linkml.github.io/linkml-map/schema/api/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Session - LinkML-Map</title>
+    <link href="../../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/highlight.css">
+    <link href="../../assets/_mkdocstrings.css" rel="stylesheet">
+    <link href="../../css/ansi-colours.css" rel="stylesheet">
+    <link href="../../css/jupyter-cells.css" rel="stylesheet">
+    <link href="../../css/pandas-dataframe.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="../../js/jquery-3.2.1.min.js"></script>
+    <script src="../../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '../..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "Session", url: "#_top", children: [
+              {title: "graphviz", url: "#linkml_map.session.Session.graphviz" },
+              {title: "invert", url: "#linkml_map.session.Session.invert" },
+              {title: "set_source_schema", url: "#linkml_map.session.Session.set_source_schema" },
+          ]},
+          {title: "Transformer", url: "#transformer", children: [
+              {title: "source_schemaview", url: "#linkml_map.transformer.transformer.Transformer.source_schemaview" },
+              {title: "specification", url: "#linkml_map.transformer.transformer.Transformer.specification" },
+              {title: "target_schemaview", url: "#linkml_map.transformer.transformer.Transformer.target_schemaview" },
+              {title: "unrestricted_eval", url: "#linkml_map.transformer.transformer.Transformer.unrestricted_eval" },
+              {title: "create_transformer_specification", url: "#linkml_map.transformer.transformer.Transformer.create_transformer_specification" },
+              {title: "load_source_schema", url: "#linkml_map.transformer.transformer.Transformer.load_source_schema" },
+              {title: "load_transformer_specification", url: "#linkml_map.transformer.transformer.Transformer.load_transformer_specification" },
+              {title: "map_database", url: "#linkml_map.transformer.transformer.Transformer.map_database" },
+              {title: "map_object", url: "#linkml_map.transformer.transformer.Transformer.map_object" },
+          ]},
+        ];
+
+    </script>
+    <script src="../../js/base.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+
+    <h1 id="session">Session</h1>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+
+    <div class="doc doc-contents first">
+
+
+        <p>A wrapper object for a transformer session.</p>
+<p>TODO:</p>
+<ul>
+<li>rename to Manager?</li>
+<li>consolidate configuration</li>
+<li>
+<p>include source and target database</p>
+<ul>
+<li>current spec, src_sv, tgt_sv all live in both this class and transformer</li>
+</ul>
+</li>
+</ul>
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>src\linkml_map\session.py</code></summary>
+                <div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 22</span>
+<span class="normal"> 23</span>
+<span class="normal"> 24</span>
+<span class="normal"> 25</span>
+<span class="normal"> 26</span>
+<span class="normal"> 27</span>
+<span class="normal"> 28</span>
+<span class="normal"> 29</span>
+<span class="normal"> 30</span>
+<span class="normal"> 31</span>
+<span class="normal"> 32</span>
+<span class="normal"> 33</span>
+<span class="normal"> 34</span>
+<span class="normal"> 35</span>
+<span class="normal"> 36</span>
+<span class="normal"> 37</span>
+<span class="normal"> 38</span>
+<span class="normal"> 39</span>
+<span class="normal"> 40</span>
+<span class="normal"> 41</span>
+<span class="normal"> 42</span>
+<span class="normal"> 43</span>
+<span class="normal"> 44</span>
+<span class="normal"> 45</span>
+<span class="normal"> 46</span>
+<span class="normal"> 47</span>
+<span class="normal"> 48</span>
+<span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Session</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A wrapper object for a transformer session.</span>
+
+<span class="sd">    TODO:</span>
+
+<span class="sd">    - rename to Manager?</span>
+<span class="sd">    - consolidate configuration</span>
+<span class="sd">    - include source and target database</span>
+
+<span class="sd">        - current spec, src_sv, tgt_sv all live in both this class and transformer</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">transformer_specification</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TransformationSpecification</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">source_schemaview</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SchemaView</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">transformer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Transformer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">object_transformer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ObjectTransformer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">schema_mapper</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SchemaMapper</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_target_schema</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SchemaDefinition</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_target_schemaview</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SchemaView</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">set_transformer_specification</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">specification</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">TransformationSpecification</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">specification</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+            <span class="n">specification</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">specification</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">specification</span><span class="p">,</span> <span class="n">TransformationSpecification</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">transformer_specification</span> <span class="o">=</span> <span class="n">specification</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">specification</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="c1"># TODO: centralize this code</span>
+            <span class="n">normalizer</span> <span class="o">=</span> <span class="n">ReferenceValidator</span><span class="p">(</span>
+                <span class="n">package_schemaview</span><span class="p">(</span><span class="s2">&quot;linkml_map.datamodel.transformer_model&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">normalizer</span><span class="o">.</span><span class="n">expand_all</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">specification</span> <span class="o">=</span> <span class="n">normalizer</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">specification</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">transformer_specification</span> <span class="o">=</span> <span class="n">TransformationSpecification</span><span class="p">(</span><span class="o">**</span><span class="n">specification</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">specification</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">specification</span><span class="p">:</span>
+                <span class="n">obj</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">specification</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">obj</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">specification</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_transformer_specification</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_source_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">SchemaView</span><span class="p">,</span> <span class="n">SchemaDefinition</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the schema from a path or SchemaView object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">sv</span> <span class="o">=</span> <span class="n">SchemaView</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+            <span class="n">sv</span> <span class="o">=</span> <span class="n">SchemaView</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">schema</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">sv</span> <span class="o">=</span> <span class="n">SchemaView</span><span class="p">(</span><span class="n">yaml_dumper</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">schema</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">SchemaView</span><span class="p">):</span>
+            <span class="n">sv</span> <span class="o">=</span> <span class="n">schema</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">SchemaDefinition</span><span class="p">):</span>
+            <span class="n">sv</span> <span class="o">=</span> <span class="n">SchemaView</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported schema type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">source_schemaview</span> <span class="o">=</span> <span class="n">sv</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target_schema</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">set_transformer</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">transformer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Transformer</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">Transformer</span><span class="p">]]],</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transformer</span><span class="p">,</span> <span class="n">Type</span><span class="p">):</span>
+            <span class="n">transformer</span> <span class="o">=</span> <span class="n">transformer</span><span class="p">()</span>
+        <span class="n">transformer</span><span class="o">.</span><span class="n">specification</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformer_specification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transformer</span> <span class="o">=</span> <span class="n">transformer</span>
+
+    <span class="k">def</span> <span class="nf">set_object_transformer</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">transformer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+            <span class="n">Union</span><span class="p">[</span><span class="n">ObjectTransformer</span><span class="p">,</span> <span class="n">TransformationSpecification</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">transformer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">object_transformer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No change&quot;</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No transformer specified&quot;</span><span class="p">)</span>
+                <span class="k">return</span>
+        <span class="k">if</span> <span class="n">transformer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transformer</span><span class="p">,</span> <span class="n">ObjectTransformer</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">object_transformer</span> <span class="o">=</span> <span class="n">transformer</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_transformer_specification</span><span class="p">(</span><span class="n">transformer</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">object_transformer</span> <span class="o">=</span> <span class="n">ObjectTransformer</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">object_transformer</span><span class="o">.</span><span class="n">specification</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformer_specification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target_schema</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">target_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SchemaDefinition</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_schema</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema_mapper</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">schema_mapper</span> <span class="o">=</span> <span class="n">SchemaMapper</span><span class="p">(</span><span class="n">source_schemaview</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source_schemaview</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_target_schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema_mapper</span><span class="o">.</span><span class="n">derive_schema</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transformer_specification</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_schema</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">target_schemaview</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SchemaView</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_schemaview</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># TODO: simplify</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_target_schemaview</span> <span class="o">=</span> <span class="n">SchemaView</span><span class="p">(</span><span class="n">yaml_dumper</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_schema</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_schemaview</span>
+
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">object_transformer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No transformer specified&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">object_transformer</span><span class="o">.</span><span class="n">source_schemaview</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">object_transformer</span><span class="o">.</span><span class="n">source_schemaview</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_schemaview</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">object_transformer</span><span class="o">.</span><span class="n">map_object</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">reverse_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">inv_spec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">invert</span><span class="p">()</span>
+        <span class="n">reverse_transformer</span> <span class="o">=</span> <span class="n">ObjectTransformer</span><span class="p">()</span>
+        <span class="n">reverse_transformer</span><span class="o">.</span><span class="n">specification</span> <span class="o">=</span> <span class="n">inv_spec</span>
+        <span class="n">reverse_transformer</span><span class="o">.</span><span class="n">source_schemaview</span> <span class="o">=</span> <span class="n">SchemaView</span><span class="p">(</span><span class="n">yaml_dumper</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_schema</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">reverse_transformer</span><span class="o">.</span><span class="n">map_object</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">invert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_place</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransformationSpecification</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Invert the transformer specification.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">inverter</span> <span class="o">=</span> <span class="n">TransformationSpecificationInverter</span><span class="p">(</span>
+            <span class="n">source_schemaview</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source_schemaview</span><span class="p">,</span>
+            <span class="n">target_schemaview</span><span class="o">=</span><span class="n">SchemaView</span><span class="p">(</span><span class="n">yaml_dumper</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_schema</span><span class="p">)),</span>
+        <span class="p">)</span>
+        <span class="n">inv_spec</span> <span class="o">=</span> <span class="n">inverter</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transformer_specification</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">in_place</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="k">return</span> <span class="n">inv_spec</span>
+
+    <span class="k">def</span> <span class="nf">graphviz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a graphviz representation of the schema.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">linkml_map.compiler.graphviz_compiler</span> <span class="kn">import</span> <span class="n">GraphvizCompiler</span>
+
+        <span class="n">gc</span> <span class="o">=</span> <span class="n">GraphvizCompiler</span><span class="p">(</span><span class="n">source_schemaview</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source_schemaview</span><span class="p">)</span>
+        <span class="n">compiled</span> <span class="o">=</span> <span class="n">gc</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transformer_specification</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">compiled</span><span class="o">.</span><span class="n">digraph</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="linkml_map.session.Session.graphviz" class="doc doc-heading">
+            <code class=" language-python"><span class="n">graphviz</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return a graphviz representation of the schema.</p>
+
+            <details class="quote">
+              <summary>Source code in <code>src\linkml_map\session.py</code></summary>
+              <div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">graphviz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a graphviz representation of the schema.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">linkml_map.compiler.graphviz_compiler</span> <span class="kn">import</span> <span class="n">GraphvizCompiler</span>
+
+    <span class="n">gc</span> <span class="o">=</span> <span class="n">GraphvizCompiler</span><span class="p">(</span><span class="n">source_schemaview</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source_schemaview</span><span class="p">)</span>
+    <span class="n">compiled</span> <span class="o">=</span> <span class="n">gc</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transformer_specification</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">compiled</span><span class="o">.</span><span class="n">digraph</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="linkml_map.session.Session.invert" class="doc doc-heading">
+            <code class=" language-python"><span class="n">invert</span><span class="p">(</span><span class="n">in_place</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Invert the transformer specification.</p>
+
+            <details class="quote">
+              <summary>Source code in <code>src\linkml_map\session.py</code></summary>
+              <div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">invert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_place</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransformationSpecification</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Invert the transformer specification.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">inverter</span> <span class="o">=</span> <span class="n">TransformationSpecificationInverter</span><span class="p">(</span>
+        <span class="n">source_schemaview</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source_schemaview</span><span class="p">,</span>
+        <span class="n">target_schemaview</span><span class="o">=</span><span class="n">SchemaView</span><span class="p">(</span><span class="n">yaml_dumper</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_schema</span><span class="p">)),</span>
+    <span class="p">)</span>
+    <span class="n">inv_spec</span> <span class="o">=</span> <span class="n">inverter</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transformer_specification</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">in_place</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    <span class="k">return</span> <span class="n">inv_spec</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="linkml_map.session.Session.set_source_schema" class="doc doc-heading">
+            <code class=" language-python"><span class="n">set_source_schema</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Sets the schema from a path or SchemaView object.</p>
+
+            <details class="quote">
+              <summary>Source code in <code>src\linkml_map\session.py</code></summary>
+              <div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_source_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">SchemaView</span><span class="p">,</span> <span class="n">SchemaDefinition</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sets the schema from a path or SchemaView object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">sv</span> <span class="o">=</span> <span class="n">SchemaView</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="n">sv</span> <span class="o">=</span> <span class="n">SchemaView</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">schema</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">sv</span> <span class="o">=</span> <span class="n">SchemaView</span><span class="p">(</span><span class="n">yaml_dumper</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">schema</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">SchemaView</span><span class="p">):</span>
+        <span class="n">sv</span> <span class="o">=</span> <span class="n">schema</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">SchemaDefinition</span><span class="p">):</span>
+        <span class="n">sv</span> <span class="o">=</span> <span class="n">SchemaView</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported schema type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">source_schemaview</span> <span class="o">=</span> <span class="n">sv</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_target_schema</span> <span class="o">=</span> <span class="kc">None</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><h1 id="transformer">Transformer</h1>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+
+    <div class="doc doc-contents first">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="abc.ABC">ABC</span></code></p>
+
+
+        <p>Base class for all transformers.</p>
+<p>A transformer will generate an instance of a target class from
+an instance of a source class, making use of a specification.</p>
+<p>This is an abstract class. Different implementations will
+subclass this</p>
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>src\linkml_map\transformer\transformer.py</code></summary>
+                <div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 37</span>
+<span class="normal"> 38</span>
+<span class="normal"> 39</span>
+<span class="normal"> 40</span>
+<span class="normal"> 41</span>
+<span class="normal"> 42</span>
+<span class="normal"> 43</span>
+<span class="normal"> 44</span>
+<span class="normal"> 45</span>
+<span class="normal"> 46</span>
+<span class="normal"> 47</span>
+<span class="normal"> 48</span>
+<span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Transformer</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for all transformers.</span>
+
+<span class="sd">    A transformer will generate an instance of a target class from</span>
+<span class="sd">    an instance of a source class, making use of a specification.</span>
+
+<span class="sd">    This is an abstract class. Different implementations will</span>
+<span class="sd">    subclass this</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">specification</span><span class="p">:</span> <span class="n">TransformationSpecification</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A specification of how to generate target objects from source objects.&quot;&quot;&quot;</span>
+
+    <span class="n">source_schemaview</span><span class="p">:</span> <span class="n">SchemaView</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A view over the schema describing the input/source object.&quot;&quot;&quot;</span>
+
+    <span class="n">_derived_specification</span><span class="p">:</span> <span class="n">TransformationSpecification</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A specification with inferred missing values.&quot;&quot;&quot;</span>
+
+    <span class="n">target_schemaview</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SchemaView</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A view over the schema describing the output/target object.&quot;&quot;&quot;</span>
+
+    <span class="n">unrestricted_eval</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set to True to allow arbitrary evals as part of transformation.&quot;&quot;&quot;</span>
+
+    <span class="n">_curie_converter</span><span class="p">:</span> <span class="n">Converter</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">map_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">OBJECT_TYPE</span><span class="p">,</span> <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OBJECT_TYPE</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transform source object into an instance of the target class.</span>
+
+<span class="sd">        :param obj:</span>
+<span class="sd">        :param source_type:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">map_database</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">source_database</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">target_database</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OBJECT_TYPE</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transform source resource.</span>
+
+<span class="sd">        :param source_database:</span>
+<span class="sd">        :param target_database:</span>
+<span class="sd">        :param kwargs:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">load_source_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets source_schemaview from a schema path.</span>
+
+<span class="sd">        :param path:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">source_schemaview</span> <span class="o">=</span> <span class="n">SchemaView</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">load_transformer_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets specification from a schema path.</span>
+
+<span class="sd">        :param path:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># self.specification = yaml_loader.load(str(path), TransformationSpecification)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="c1"># necessary to expand first</span>
+            <span class="n">normalizer</span> <span class="o">=</span> <span class="n">ReferenceValidator</span><span class="p">(</span>
+                <span class="n">package_schemaview</span><span class="p">(</span><span class="s2">&quot;linkml_map.datamodel.transformer_model&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">normalizer</span><span class="o">.</span><span class="n">expand_all</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">normalizer</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">specification</span> <span class="o">=</span> <span class="n">TransformationSpecification</span><span class="p">(</span><span class="o">**</span><span class="n">obj</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_transformer_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates specification from a dict.</span>
+
+<span class="sd">        TODO: this will no longer be necessary when pydantic supports inlined as dict</span>
+
+<span class="sd">        :param path:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">normalizer</span> <span class="o">=</span> <span class="n">ReferenceValidator</span><span class="p">(</span>
+            <span class="n">package_schemaview</span><span class="p">(</span><span class="s2">&quot;linkml_map.datamodel.transformer_model&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">normalizer</span><span class="o">.</span><span class="n">expand_all</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">normalizer</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">specification</span> <span class="o">=</span> <span class="n">TransformationSpecification</span><span class="p">(</span><span class="o">**</span><span class="n">obj</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">derived_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TransformationSpecification</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_derived_specification</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">specification</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_derived_specification</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">specification</span><span class="p">)</span>
+            <span class="n">induce_missing_values</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_derived_specification</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_schemaview</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_derived_specification</span>
+
+    <span class="k">def</span> <span class="nf">_get_class_derivation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_class_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClassDerivation</span><span class="p">:</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_specification</span>
+        <span class="n">matching_tgt_class_derivs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">deriv</span>
+            <span class="k">for</span> <span class="n">deriv</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">class_derivations</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">deriv</span><span class="o">.</span><span class="n">populated_from</span> <span class="o">==</span> <span class="n">target_class_name</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">deriv</span><span class="o">.</span><span class="n">populated_from</span> <span class="ow">and</span> <span class="n">target_class_name</span> <span class="o">==</span> <span class="n">deriv</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target class derivations=</span><span class="si">{</span><span class="n">matching_tgt_class_derivs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matching_tgt_class_derivs</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Could not find class derivation for </span><span class="si">{</span><span class="n">target_class_name</span><span class="si">}</span><span class="s2"> (results=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">matching_tgt_class_derivs</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="p">)</span>
+        <span class="n">cd</span> <span class="o">=</span> <span class="n">matching_tgt_class_derivs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">ancmap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_class_derivation_ancestors</span><span class="p">(</span><span class="n">cd</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ancmap</span><span class="p">:</span>
+            <span class="n">cd</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">cd</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">anc</span> <span class="ow">in</span> <span class="n">ancmap</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">anc</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">!=</span> <span class="p">[]:</span>
+                        <span class="n">curr_v</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cd</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">curr_v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                            <span class="n">curr_v</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">curr_v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                            <span class="n">curr_v</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="o">**</span><span class="n">v</span><span class="p">,</span> <span class="o">**</span><span class="n">curr_v</span><span class="p">})</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">curr_v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                                <span class="nb">setattr</span><span class="p">(</span><span class="n">cd</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cd</span>
+
+    <span class="k">def</span> <span class="nf">_class_derivation_ancestors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cd</span><span class="p">:</span> <span class="n">ClassDerivation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ClassDerivation</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a map of all class derivations that are ancestors of the given class derivation.</span>
+<span class="sd">        :param cd:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">specification</span>
+        <span class="n">ancestors</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">parents</span> <span class="o">=</span> <span class="n">cd</span><span class="o">.</span><span class="n">mixins</span> <span class="o">+</span> <span class="p">([</span><span class="n">cd</span><span class="o">.</span><span class="n">is_a</span><span class="p">]</span> <span class="k">if</span> <span class="n">cd</span><span class="o">.</span><span class="n">is_a</span> <span class="k">else</span> <span class="p">[])</span>
+        <span class="k">for</span> <span class="n">parent</span> <span class="ow">in</span> <span class="n">parents</span><span class="p">:</span>
+            <span class="n">ancestors</span><span class="p">[</span><span class="n">parent</span><span class="p">]</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">class_derivations</span><span class="p">[</span><span class="n">parent</span><span class="p">]</span>
+            <span class="n">ancestors</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_class_derivation_ancestors</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">class_derivations</span><span class="p">[</span><span class="n">parent</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">ancestors</span>
+
+    <span class="k">def</span> <span class="nf">_get_enum_derivation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_enum_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnumDerivation</span><span class="p">:</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_specification</span>
+        <span class="n">matching_tgt_enum_derivs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">deriv</span>
+            <span class="k">for</span> <span class="n">deriv</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">enum_derivations</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">deriv</span><span class="o">.</span><span class="n">populated_from</span> <span class="o">==</span> <span class="n">target_enum_name</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">deriv</span><span class="o">.</span><span class="n">populated_from</span> <span class="ow">and</span> <span class="n">target_enum_name</span> <span class="o">==</span> <span class="n">deriv</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target enum derivations=</span><span class="si">{</span><span class="n">matching_tgt_enum_derivs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matching_tgt_enum_derivs</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find what to derive from a source </span><span class="si">{</span><span class="n">target_enum_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">matching_tgt_enum_derivs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_is_coerce_to_multivalued</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">slot_derivation</span><span class="p">:</span> <span class="n">SlotDerivation</span><span class="p">,</span> <span class="n">class_derivation</span><span class="p">:</span> <span class="n">ClassDerivation</span>
+    <span class="p">):</span>
+        <span class="n">cast_as</span> <span class="o">=</span> <span class="n">slot_derivation</span><span class="o">.</span><span class="n">cast_collection_as</span>
+        <span class="k">if</span> <span class="n">cast_as</span> <span class="ow">and</span> <span class="n">cast_as</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="n">CollectionType</span><span class="o">.</span><span class="n">MultiValued</span><span class="p">,</span>
+            <span class="n">CollectionType</span><span class="o">.</span><span class="n">MultiValuedDict</span><span class="p">,</span>
+            <span class="n">CollectionType</span><span class="o">.</span><span class="n">MultiValuedDict</span><span class="p">,</span>
+        <span class="p">]:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">slot_derivation</span><span class="o">.</span><span class="n">stringification</span> <span class="ow">and</span> <span class="n">slot_derivation</span><span class="o">.</span><span class="n">stringification</span><span class="o">.</span><span class="n">reversed</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="n">sv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_schemaview</span>
+        <span class="k">if</span> <span class="n">sv</span><span class="p">:</span>
+            <span class="n">slot</span> <span class="o">=</span> <span class="n">sv</span><span class="o">.</span><span class="n">induced_slot</span><span class="p">(</span><span class="n">slot_derivation</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">class_derivation</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">slot</span><span class="o">.</span><span class="n">multivalued</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_is_coerce_to_singlevalued</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">slot_derivation</span><span class="p">:</span> <span class="n">SlotDerivation</span><span class="p">,</span> <span class="n">class_derivation</span><span class="p">:</span> <span class="n">ClassDerivation</span>
+    <span class="p">):</span>
+        <span class="n">cast_as</span> <span class="o">=</span> <span class="n">slot_derivation</span><span class="o">.</span><span class="n">cast_collection_as</span>
+        <span class="k">if</span> <span class="n">cast_as</span> <span class="ow">and</span> <span class="n">cast_as</span> <span class="o">==</span> <span class="n">CollectionType</span><span class="p">(</span><span class="n">CollectionType</span><span class="o">.</span><span class="n">SingleValued</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">slot_derivation</span><span class="o">.</span><span class="n">stringification</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">slot_derivation</span><span class="o">.</span><span class="n">stringification</span><span class="o">.</span><span class="n">reversed</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="n">sv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_schemaview</span>
+        <span class="k">if</span> <span class="n">sv</span><span class="p">:</span>
+            <span class="n">slot</span> <span class="o">=</span> <span class="n">sv</span><span class="o">.</span><span class="n">induced_slot</span><span class="p">(</span><span class="n">slot_derivation</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">class_derivation</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">slot</span><span class="o">.</span><span class="n">multivalued</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_coerce_datatype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">target_range</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">target_range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">v</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_coerce_datatype</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">target_range</span><span class="p">)</span> <span class="k">for</span> <span class="n">v1</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coerce_datatype</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">target_range</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v1</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">cmap</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;integer&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="s2">&quot;float&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+            <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="s2">&quot;boolean&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="n">cmap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">target_range</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown target range </span><span class="si">{</span><span class="n">target_range</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">v</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">v</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">curie_converter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Converter</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curie_converter</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_curie_converter</span> <span class="o">=</span> <span class="n">Converter</span><span class="p">([])</span>
+            <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_schemaview</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">prefixes</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_curie_converter</span><span class="o">.</span><span class="n">add_prefix</span><span class="p">(</span><span class="n">prefix</span><span class="o">.</span><span class="n">prefix_prefix</span><span class="p">,</span> <span class="n">prefix</span><span class="o">.</span><span class="n">prefix_reference</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">specification</span><span class="o">.</span><span class="n">prefixes</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_curie_converter</span><span class="o">.</span><span class="n">add_prefix</span><span class="p">(</span><span class="n">prefix</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">prefix</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curie_converter</span>
+
+    <span class="k">def</span> <span class="nf">expand_curie</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curie</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">curie_converter</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">curie</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">compress_uri</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">curie_converter</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="linkml_map.transformer.transformer.Transformer.source_schemaview" class="doc doc-heading">
+            <code class=" language-python"><span class="n">source_schemaview</span><span class="p">:</span> <span class="n">SchemaView</span> <span class="o">=</span> <span class="kc">None</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>A view over the schema describing the input/source object.</p>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="linkml_map.transformer.transformer.Transformer.specification" class="doc doc-heading">
+            <code class=" language-python"><span class="n">specification</span><span class="p">:</span> <span class="n">TransformationSpecification</span> <span class="o">=</span> <span class="kc">None</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>A specification of how to generate target objects from source objects.</p>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="linkml_map.transformer.transformer.Transformer.target_schemaview" class="doc doc-heading">
+            <code class=" language-python"><span class="n">target_schemaview</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SchemaView</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>A view over the schema describing the output/target object.</p>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="linkml_map.transformer.transformer.Transformer.unrestricted_eval" class="doc doc-heading">
+            <code class=" language-python"><span class="n">unrestricted_eval</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Set to True to allow arbitrary evals as part of transformation.</p>
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="linkml_map.transformer.transformer.Transformer.create_transformer_specification" class="doc doc-heading">
+            <code class=" language-python"><span class="n">create_transformer_specification</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Creates specification from a dict.</p>
+<p>TODO: this will no longer be necessary when pydantic supports inlined as dict</p>
+<p>:param path:
+:return:</p>
+
+            <details class="quote">
+              <summary>Source code in <code>src\linkml_map\transformer\transformer.py</code></summary>
+              <div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_transformer_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates specification from a dict.</span>
+
+<span class="sd">    TODO: this will no longer be necessary when pydantic supports inlined as dict</span>
+
+<span class="sd">    :param path:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">normalizer</span> <span class="o">=</span> <span class="n">ReferenceValidator</span><span class="p">(</span>
+        <span class="n">package_schemaview</span><span class="p">(</span><span class="s2">&quot;linkml_map.datamodel.transformer_model&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">normalizer</span><span class="o">.</span><span class="n">expand_all</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">obj</span> <span class="o">=</span> <span class="n">normalizer</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">specification</span> <span class="o">=</span> <span class="n">TransformationSpecification</span><span class="p">(</span><span class="o">**</span><span class="n">obj</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="linkml_map.transformer.transformer.Transformer.load_source_schema" class="doc doc-heading">
+            <code class=" language-python"><span class="n">load_source_schema</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Sets source_schemaview from a schema path.</p>
+<p>:param path:
+:return:</p>
+
+            <details class="quote">
+              <summary>Source code in <code>src\linkml_map\transformer\transformer.py</code></summary>
+              <div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span>
+<span class="normal">96</span>
+<span class="normal">97</span>
+<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">load_source_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sets source_schemaview from a schema path.</span>
+
+<span class="sd">    :param path:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">source_schemaview</span> <span class="o">=</span> <span class="n">SchemaView</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="linkml_map.transformer.transformer.Transformer.load_transformer_specification" class="doc doc-heading">
+            <code class=" language-python"><span class="n">load_transformer_specification</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Sets specification from a schema path.</p>
+<p>:param path:
+:return:</p>
+
+            <details class="quote">
+              <summary>Source code in <code>src\linkml_map\transformer\transformer.py</code></summary>
+              <div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">load_transformer_specification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sets specification from a schema path.</span>
+
+<span class="sd">    :param path:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># self.specification = yaml_loader.load(str(path), TransformationSpecification)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="c1"># necessary to expand first</span>
+        <span class="n">normalizer</span> <span class="o">=</span> <span class="n">ReferenceValidator</span><span class="p">(</span>
+            <span class="n">package_schemaview</span><span class="p">(</span><span class="s2">&quot;linkml_map.datamodel.transformer_model&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">normalizer</span><span class="o">.</span><span class="n">expand_all</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">normalizer</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">specification</span> <span class="o">=</span> <span class="n">TransformationSpecification</span><span class="p">(</span><span class="o">**</span><span class="n">obj</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="linkml_map.transformer.transformer.Transformer.map_database" class="doc doc-heading">
+            <code class=" language-python"><span class="n">map_database</span><span class="p">(</span><span class="n">source_database</span><span class="p">,</span> <span class="n">target_database</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Transform source resource.</p>
+<p>:param source_database:
+:param target_database:
+:param kwargs:
+:return:</p>
+
+            <details class="quote">
+              <summary>Source code in <code>src\linkml_map\transformer\transformer.py</code></summary>
+              <div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">map_database</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">source_database</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">target_database</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OBJECT_TYPE</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transform source resource.</span>
+
+<span class="sd">    :param source_database:</span>
+<span class="sd">    :param target_database:</span>
+<span class="sd">    :param kwargs:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="linkml_map.transformer.transformer.Transformer.map_object" class="doc doc-heading">
+            <code class=" language-python"><span class="n">map_object</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">source_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Transform source object into an instance of the target class.</p>
+<p>:param obj:
+:param source_type:
+:return:</p>
+
+            <details class="quote">
+              <summary>Source code in <code>src\linkml_map\transformer\transformer.py</code></summary>
+              <div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">map_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">OBJECT_TYPE</span><span class="p">,</span> <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OBJECT_TYPE</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transform source object into an instance of the target class.</span>
+
+<span class="sd">    :param obj:</span>
+<span class="sd">    :param source_type:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+  <br>
+    
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+      <p>
+        <a href="https://github.com/linkml/linkml-map/edit/master/docs/schema/api.md"><i class="fa fa-github"></i>
+Edit on GitHub</a>
+      </p>
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>

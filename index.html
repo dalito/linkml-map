@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="None">
+    
+    <link rel="canonical" href="https://linkml.github.io/linkml-map/">
+    <link rel="shortcut icon" href="./img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>LinkML-Map</title>
+    <link href="./css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="./css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="./css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/highlight.css">
+    <link href="assets/_mkdocstrings.css" rel="stylesheet">
+    <link href="css/ansi-colours.css" rel="stylesheet">
+    <link href="css/jupyter-cells.css" rel="stylesheet">
+    <link href="css/pandas-dataframe.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="./js/jquery-3.2.1.min.js"></script>
+    <script src="./js/bootstrap-3.3.7.min.js"></script>
+    <script src="./js/highlight.pack.js"></script>
+    
+      <script src="./js/elasticlunr.min.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '.';
+      var is_top_frame = (window === window.parent);
+        
+        var pageToc = [
+          {title: "LinkML-Map", url: "#_top", children: [
+              {title: "Basic idea", url: "#basic-idea" },
+              {title: "Installation and usage", url: "#installation-and-usage" },
+              {title: "Details", url: "#details" },
+              {title: "Data Model", url: "#data-model" },
+              {title: "Conformance Suite", url: "#conformance-suite" },
+              {title: "Running the code", url: "#running-the-code" },
+          ]},
+        ];
+
+    </script>
+    <script src="./js/base.js"></script> 
+</head>
+
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
+
+<nav class="navbar wm-page-top-frame">
+  <div class="container-fluid wm-top-container">
+    
+    <div class="wm-top-tool pull-right wm-vcenter">
+      <form class="dropdown wm-vcentered" id="wm-search-form" action="./search.html">
+        
+        <button id="wm-search-show" class="btn btn-sm btn-default" type="submit"
+          ><i class="fa fa-search" aria-hidden="true"></i></button>
+
+        <div class="input-group input-group-sm wm-top-search">
+          <input type="text" name="q" class="form-control" id="mkdocs-search-query" placeholder="Search" autocomplete="off">
+          <span class="input-group-btn" role="search">
+            
+            <button class="btn btn-default dropdown-toggle collapse" data-toggle="dropdown" type="button"><span class="caret"></span></button>
+            <ul id="mkdocs-search-results" class="dropdown-menu dropdown-menu-right"></ul>
+            <button id="wm-search-go" class="btn btn-default" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+          </span>
+        </div>
+      </form>
+    </div>
+
+    
+    <div class="wm-top-tool wm-vcenter pull-right wm-small-left">
+      <button id="wm-toc-button" type="button" class="btn btn-sm btn-default wm-vcentered"><i class="fa fa-th-list" aria-hidden="true"></i></button>
+    </div>
+
+    
+    
+
+    
+    <a href="" class="wm-top-brand wm-top-link wm-vcenter">
+      
+      <div class="wm-top-title">
+        LinkML-Map<br>
+        
+      </div>
+    </a>
+  </div>
+</nav>
+
+  <div id="main-content" class="wm-page-top-frame">
+    
+<nav class="wm-toc-pane">
+  
+    <ul class="wm-toctree wm-toc-repo">
+      <li class="wm-toc-li wm-toc-lev1">
+      <a class="wm-article-link wm-toc-text" href="https://github.com/linkml/linkml-map/">
+        <i class="fa fa-github"></i>
+
+        GitHub
+      </a>
+      </li>
+    </ul>
+  <ul class="wm-toctree">
+        <li class="wm-toc-li wm-toc-lev1 "><a href="" class="wm-article-link wm-toc-text">Index</a>
+</li>
+        <li class="wm-toc-li wm-toc-lev1 wm-toc-opener"><span class="wm-toc-text">Examples</span>
+</li>
+<li class="wm-toc-li-nested collapse">
+  <ul class="wm-toctree">
+      <li class="wm-toc-li wm-toc-lev2 "><a href="examples/Tutorial/" class="wm-article-link wm-toc-text">Tutorial</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="examples/Tutorial-SQLCompiler/" class="wm-article-link wm-toc-text">Compilation to SQL</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="examples/MetamodelMapping/" class="wm-article-link wm-toc-text">Metamodel Mapping</a>
+</li>
+  </ul>
+</li>
+
+        <li class="wm-toc-li wm-toc-lev1 wm-toc-opener"><span class="wm-toc-text">Specification</span>
+</li>
+<li class="wm-toc-li-nested collapse">
+  <ul class="wm-toctree">
+      <li class="wm-toc-li wm-toc-lev2 "><a href="schema/datamodel/" class="wm-article-link wm-toc-text">Data Model</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="specification/compliance/" class="wm-article-link wm-toc-text">Compliance Suite</a>
+</li>
+  </ul>
+</li>
+
+        <li class="wm-toc-li wm-toc-lev1 wm-toc-opener"><span class="wm-toc-text">API</span>
+</li>
+<li class="wm-toc-li-nested collapse">
+  <ul class="wm-toctree">
+      <li class="wm-toc-li wm-toc-lev2 "><a href="api/session/" class="wm-article-link wm-toc-text">Session</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="api/transformer/" class="wm-article-link wm-toc-text">Transformer</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="api/compiler/" class="wm-article-link wm-toc-text">Compiler</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="api/importer.md" class="wm-article-link wm-toc-text">Importer</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="api/inference/" class="wm-article-link wm-toc-text">Inference</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="api/functions/" class="wm-article-link wm-toc-text">Functions</a>
+</li>
+      <li class="wm-toc-li wm-toc-lev2 "><a href="api/subsetter.md" class="wm-article-link wm-toc-text">Subsetter</a>
+</li>
+  </ul>
+</li>
+
+        <li class="wm-toc-li wm-toc-lev1 "><a href="faq/" class="wm-article-link wm-toc-text">FAQ</a>
+</li>
+  </ul>
+</nav>
+
+    <div class="wm-content-pane">
+      <iframe class="wm-article" name="article"></iframe>
+    </div>
+  </div>
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="examples/Tutorial/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="examples/Tutorial/" class="btn btn-xs btn-link">
+        Tutorial
+      </a>
+    </div>
+    
+  </div>
+
+    
+
+    <h1 id="linkml-map">LinkML-Map</h1>
+<p>LinkML Map is a framework for specifying and executing mappings between data models.</p>
+<p>Features:</p>
+<ul>
+<li>YAML-based lightweight syntax</li>
+<li>Python library for executing mappings on data files</li>
+<li>Ability to compile to other frameworks (SQL/DuckDB)</li>
+<li>Derivation of target (implicit) schemas, allowing easy customization of data models (<em>profiling</em>)</li>
+<li>Simple YAML dictionaries for simple mappings</li>
+<li>Automatic unit conversion</li>
+<li>Use of subset of Python to specify complex mappings</li>
+<li>Visualizations of mappings</li>
+<li>Mappings are reversible (provided all expressions used are reversible)</li>
+<li>Compatibility with SSSOM</li>
+</ul>
+<p>This documentation are available at:</p>
+<ul>
+<li><a href="https://linkml.io/linkml-map/">linkml.io/linkml-map/</a></li>
+</ul>
+<p>Status:</p>
+<p>The transformation data model is not yet fully stable, and may be subject to change.
+Not all parts of the model are implemented in the reference Python framework.</p>
+<h2 id="basic-idea">Basic idea</h2>
+<p>Given the LinkML schema </p>
+<div class="highlight"><pre><span></span><code><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/linkml/examples/personinfo</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">personinfo</span>
+<span class="nt">prefixes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">linkml</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/linkml/</span>
+<span class="w">  </span><span class="nt">personinfo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://w3id.org/linkml/examples/personinfo</span>
+<span class="nt">imports</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">linkml:types</span>
+<span class="nt">default_range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="nt">default_prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">personinfo</span>
+
+<span class="nt">classes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">Person</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">attributes</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">id</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">given_name</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">family_name</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">aliases</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">multivalued</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">height_in_cm</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">float</span>
+<span class="w">        </span><span class="nt">unit</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">ucum_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cm</span>
+<span class="w">      </span><span class="nt">age_in_years</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">integer</span>
+</code></pre></div>
+<p>and an object that conforms to it, e.g.:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">given_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Jane</span>
+<span class="nt">family_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Doe</span>
+<span class="nt">height_in_cm</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">172.0</span>
+<span class="nt">age_in_years</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">33</span>
+<span class="nt">aliases</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Janey</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Janie</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<p>Define a mapping in YAML:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">class_derivations</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">Individual</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">populated_from</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Person</span>
+<span class="w">    </span><span class="nt">slot_derivations</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{given_name}</span><span class="nv"> </span><span class="s">+</span><span class="nv"> </span><span class="s">&#39;</span><span class="nv"> </span><span class="s">&#39;</span><span class="nv"> </span><span class="s">+</span><span class="nv"> </span><span class="s">{family_name}&quot;</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Concatenating given and family names</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">note this is a bad assumption for names in general,</span>
+<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">this is just for demonstration</span>
+<span class="w">      </span><span class="nt">height_in_meters</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">populated_from</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">height_in_cm</span>
+<span class="w">        </span><span class="nt">unit_conversion</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">target_unit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">m</span>
+<span class="w">      </span><span class="nt">aliases</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">populated_from</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aliases</span>
+<span class="w">        </span><span class="nt">stringification</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">delimiter</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;|&#39;</span>
+</code></pre></div>
+<p>The schema mapping (aka <a href="schema/TransformationSpecification/">TransformationSpecification</a>) specifies how to transform the data model.</p>
+<p>The schema mapping is a collection of one or more <a href="schema/ClassDerivation/">ClassDerivation</a> objects,
+which themselves consist of one or more <a href="schema/SlotDerivation/">SlotDerivation</a> objects.</p>
+<p>Transform the data:</p>
+<div class="highlight"><pre><span></span><code>linkml-map<span class="w"> </span>map-data<span class="w"> </span>-T<span class="w"> </span>tr.yaml<span class="w"> </span>-s<span class="w"> </span>schema.yaml<span class="w"> </span>my-data.yaml
+</code></pre></div>
+<p>Giving:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Jane Doe</span>
+<span class="nt">height_in_meters</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.72</span>
+<span class="nt">aliases</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Janey|Janie</span>
+</code></pre></div>
+<h2 id="installation-and-usage">Installation and usage</h2>
+<p>Installation and command line usage:</p>
+<div class="highlight"><pre><span></span><code>pip<span class="o">[</span>x<span class="o">]</span><span class="w"> </span>install<span class="w"> </span>linkml-map
+<span class="nb">cd</span><span class="w"> </span>tests/input/examples/personinfo_basic
+linkml-map<span class="w"> </span>map-data<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-T<span class="w"> </span>transform/personinfo-to-agent.transform.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-s<span class="w"> </span>source/personinfo.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">   </span>data/Container-001.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">   </span>-o<span class="w"> </span>output/Translated-001.yaml
+</code></pre></div>
+<p>The command line has subcommands for:</p>
+<ul>
+<li><code>map-data</code> - map data from a source schema to a target schema</li>
+<li><code>derive-schema</code> - derive a target schema from a source schema and a mapping</li>
+<li><code>invert</code> - reverses a mapping</li>
+<li><code>compile</code> - compiles a mapping to another framework<ul>
+<li><code>markdown</code> - for generating static sites</li>
+<li><code>graphviz</code> - for generating visualizations</li>
+<li><code>python</code> - (partial)</li>
+<li>forthcoming: <code>r2rml</code>, ...</li>
+</ul>
+</li>
+</ul>
+<h2 id="details">Details</h2>
+<p>This repo contains both:</p>
+<ul>
+<li>A <a href="schema/">data model</a> for a data model <em>transformation language</em></li>
+<li>A reference python implementation</li>
+</ul>
+<p>The transformation language is specified in terms of <a href="https://linkml.io">LinkML</a> schemas.
+It is intended to be a <em>ployglot</em> transformation language, used for
+specifying how to map data models independent of underlying representation
+(TSVs, JSON/YAML, RDF, SQL Database, ...).</p>
+<p>Use cases include:</p>
+<ul>
+<li>ETL and mapping from one data model to another</li>
+<li>Database migrations (one version of a schema to another)</li>
+<li>Creating "profiles"</li>
+<li>Specifying mappings between different serializations of a model (e.g. OO to Relational)</li>
+<li>Mapping between normalized/non-redundant forms and denormalized/query-optimized forms</li>
+</ul>
+<h2 id="data-model">Data Model</h2>
+<p>The data model for transformations mirrors the data model for schemas:</p>
+<ul>
+<li>A top level <a href="schema/TransformationSpecification/">TransformationSpecification</a> class contains:</li>
+<li>Zero or more <a href="schema/ClassDerivation/">ClassDerivation</a> objects, specifying how to map to a class, containing<ul>
+<li>Zero or more <a href="schema/SlotDerivation/">SlotDerivation</a> objects, specifying how to map to a slot</li>
+</ul>
+</li>
+<li>Zero or more <a href="schema/EnumDerivation/">EnumDerivation</a> objects, specifying how to map to an enum</li>
+</ul>
+<p>See the <a href="schema/">generated docs</a></p>
+<h2 id="conformance-suite">Conformance Suite</h2>
+<p>The Maps conformance suite contains a collection of tests for each feature of the language.</p>
+<p>See:</p>
+<ul>
+<li><a href="specification/compliance/">Compliance Suite</a></li>
+</ul>
+<h2 id="running-the-code">Running the code</h2>
+<div class="highlight"><pre><span></span><code>linkml-map<span class="w"> </span>--help
+Usage:<span class="w"> </span>linkml-map<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+
+<span class="w">  </span>CLI<span class="w"> </span><span class="k">for</span><span class="w"> </span>linkml-map.
+
+Options:
+<span class="w">  </span>-v,<span class="w"> </span>--verbose
+<span class="w">  </span>-q,<span class="w"> </span>--quiet<span class="w"> </span>TEXT
+<span class="w">  </span>--help<span class="w">            </span>Show<span class="w"> </span>this<span class="w"> </span>message<span class="w"> </span>and<span class="w"> </span>exit.
+
+Commands:
+<span class="w">  </span>derive-schema<span class="w">  </span>Derive<span class="w"> </span>a<span class="w"> </span>schema<span class="w"> </span>from<span class="w"> </span>a<span class="w"> </span><span class="nb">source</span><span class="w"> </span>schema<span class="w"> </span>and<span class="w"> </span>a<span class="w"> </span>mapping.
+<span class="w">  </span>map-data<span class="w">       </span>Map<span class="w"> </span>data<span class="w"> </span><span class="k">in</span><span class="w"> </span>a<span class="w"> </span><span class="nb">source</span><span class="w"> </span>schema<span class="w"> </span>using<span class="w"> </span>a<span class="w"> </span>transformation.
+</code></pre></div>
+<h3 id="map-data">map-data</h3>
+<p>Transforms (maps) data from a source schema to a target schema. This could range from a simple data dictionary mapping
+through to a complex mappings.</p>
+<div class="highlight"><pre><span></span><code>cd tests/input/examples/personinfo_basic
+linkml-map map-data -T transform/personinfo-to-agent.transform.yaml -s source/personinfo.yaml  data/Container-001.yaml
+</code></pre></div>
+<h3 id="derive-schema">derive-schema</h3>
+<div class="highlight"><pre><span></span><code>cd tests/input/examples/personinfo_basic
+linkml-map derive-schema -T transform/personinfo-to-agent.transform.yaml source/personinfo.yaml
+</code></pre></div>
+
+  <br>
+    
+
+    
+    
+      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav pull-right">
+      <a href="examples/Tutorial/" class="btn btn-xs btn-default pull-right">
+        Next
+        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      </a>
+      <a href="examples/Tutorial/" class="btn btn-xs btn-link">
+        Tutorial
+      </a>
+    </div>
+    
+  </div>
+
+    <br>
+</div>
+
+<footer class="container-fluid wm-page-content">
+      <p>
+        <a href="https://github.com/linkml/linkml-map/edit/master/docs/index.md"><i class="fa fa-github"></i>
+Edit on GitHub</a>
+      </p>
+  <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
+
+</body>
+</html>
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2025-01-10 17:58:36.582421+00:00
+-->
